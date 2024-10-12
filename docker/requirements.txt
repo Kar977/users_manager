@@ -1,0 +1,7 @@
+python==3.11.0
+fastapi==0.101.0
+sqlalchemy
+pydantic==1.10.4
+sqlalchemy-utils
+psycopg2-binary
+starlette==0.30.0
