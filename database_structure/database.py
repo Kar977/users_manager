@@ -19,7 +19,7 @@ db_engine = get_engine("postgres", "password", "localhost", "5432", "user_manage
 SessionLocal = sessionmaker(bind=db_engine)
 
 def get_db():
-    session = SessionLocal
+    session = SessionLocal()
     try:
         yield session
     finally:

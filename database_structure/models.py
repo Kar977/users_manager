@@ -1,8 +1,7 @@
-from email.policy import default
-
 from sqlalchemy import Column, Integer, String, DATE, ForeignKey
 from sqlalchemy.orm import declarative_base, relationship, backref, validates
 
+from database_structure.database import db_engine
 
 Base = declarative_base()
 
@@ -21,6 +20,7 @@ class Organization(Base):
     id = Column("id", Integer, primary_key=True, autoincrement=True)
     name = Column("name", String, nullable=False)
     employees = relationship("Employee", backref("organization"))
+
 
 class Employee(Base):
 
@@ -50,3 +50,7 @@ class Employee(Base):
             )
         return employment_status
 
+
+Base.metadata.create_all(bind=db_engine)
+
+print('poszlo?')
