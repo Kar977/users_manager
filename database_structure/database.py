@@ -14,9 +14,11 @@ def get_engine(user: str, password: str, host: str, port: str, db: str):
 
     return engine
 
+
 db_engine = get_engine("postgres", "password", "localhost", "5432", "user_manager_db")
 
 SessionLocal = sessionmaker(bind=db_engine)
+
 
 def get_db():
     session = SessionLocal()

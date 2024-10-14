@@ -5,12 +5,16 @@ from database_structure.database import db_engine
 
 Base = declarative_base()
 
-VALID_ROLE = ("employee",
-              "manager",)
+VALID_ROLE = (
+    "employee",
+    "manager",
+)
 
-VALID_EMPLOYMENT_STATUS = ("full-time",
-                           "part-time",
-                           "terminated",)
+VALID_EMPLOYMENT_STATUS = (
+    "full-time",
+    "part-time",
+    "terminated",
+)
 
 
 class Organization(Base):
@@ -37,9 +41,7 @@ class Employee(Base):
     @validates("role")
     def validate_role(self, key, role):
         if role not in VALID_ROLE:
-            raise ValueError(
-                f"Invalid role: {role}. Must be one of {VALID_ROLE}"
-            )
+            raise ValueError(f"Invalid role: {role}. Must be one of {VALID_ROLE}")
         return role
 
     @validates("employment_status")
@@ -52,5 +54,3 @@ class Employee(Base):
 
 
 Base.metadata.create_all(bind=db_engine)
-
-print('poszlo?')
