@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 
-
 from employees import routers as employee_router
 
 app = FastAPI()
