@@ -1,7 +1,15 @@
 from fastapi import FastAPI
 
-from employees import routers as employee_router
+from employees.routers import organization as organization_router
+from employees.routers import users as users_router
 
 app = FastAPI()
 
-app.include_router(employee_router.router)
+
+def register_routers():
+
+    app.include_router(users_router.router)
+    app.include_router(organization_router.router)
+
+
+register_routers()
