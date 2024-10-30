@@ -1,27 +1,39 @@
 import json
 
-import requests
+import aiohttp
+from fastapi import HTTPException
 
 from settings import Settings
 
 
-def make_request_with_error_handling(method: str, url: str, headers=None, data=None):
-
+async def make_request_with_error_handling(
+    method: str, url: str, headers=None, data=None
+):
     try:
-        response = requests.request(method, url, headers=headers, data=data)
-        response.status_code
-        return response.text
-    except requests.exceptions.HTTPError as http_err:
-        return f"HTTP Error: {http_err}"
-    except requests.exceptions.RequestException as req_err:
-        return f"HTTP error occurred: {req_err}"
+        async with aiohttp.ClientSession() as session:
+            response = await session.request(method, url, headers=headers, data=data)
+            response.raise_for_status()
+
+            result = {
+                "status": response.status,
+                "headers": dict(response.headers),
+                "body": await response.text(),
+            }
+
+            return result
+    except aiohttp.ClientResponseError as http_err:
+        raise HTTPException(status_code=http_err.status, detail=http_err.message)
+    except aiohttp.ClientConnectionError as conn_err:
+        raise HTTPException(conn_err)
+    except aiohttp.ClientError as client_err:
+        raise HTTPException(client_err)
     except Exception as err:
-        return f"An error occurred: {err}"
+        raise HTTPException(status_Code=500, detail=err)
 
 
 class OrganizationManager:
 
-    def create_organization(
+    async def create_organization(
         self,
         name: str,
         display_name: str,
@@ -58,12 +70,13 @@ class OrganizationManager:
             "Authorization": f"Bearer {Settings.MANAGEMENT_API_TOKEN}",
         }
 
-        response = make_request_with_error_handling(
+        response = await make_request_with_error_handling(
             "POST", url, headers=headers, data=payload
         )
-        return response
 
-    def get_organization_by_name(self, name: str = "nowy-polski-salon"):
+        return response.get("body")
+
+    async def get_organization_by_name(self, name: str = "nowy-polski-salon"):
 
         url = f"https://{Settings.TENANT_DOMAIN}.eu.auth0.com/api/v2/organizations/name/{name}"
 
@@ -73,24 +86,24 @@ class OrganizationManager:
             "Authorization": f"Bearer {Settings.MANAGEMENT_API_TOKEN}",
         }
 
-        response = make_request_with_error_handling(
+        response = await make_request_with_error_handling(
             "GET", url, headers=headers, data=payload
         )
-        return response
+        return response.get("body")
 
-    def delete_organization_by_identifier(self, identifier: str):
+    async def delete_organization_by_identifier(self, identifier: str):
 
         url = f"https://{Settings.TENANT_DOMAIN}.eu.auth0.com/api/v2/organizations/{identifier}"
 
         payload = {}
         headers = {"Authorization": f"Bearer {Settings.MANAGEMENT_API_TOKEN}"}
 
-        response = make_request_with_error_handling(
+        response = await make_request_with_error_handling(
             "DELETE", url, headers=headers, data=payload
         )
-        return response.text
+        return response.get("body")
 
-    def modify_organization(
+    async def modify_organization(
         self,
         identifier: str,
         name: str = None,
@@ -127,10 +140,28 @@ class OrganizationManager:
             "Authorization": f"Bearer {Settings.MANAGEMENT_API_TOKEN}",
         }
 
-        response = make_request_with_error_handling(
+        response = await make_request_with_error_handling(
             "PATCH", url, headers=headers, data=json.dumps(payload)
         )
-        return response
+        return response.get("body")
+
+    async def change_client_type(self, client_id: str, app_type: str):
+        url = (
+            f"https://{Settings.TENANT_DOMAIN}.eu.auth0.com/api/v2/clients/{client_id}"
+        )
+
+        payload = json.dumps({"app_type": f"{app_type}"})
+        headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "Authorization": f"Bearer {Settings.MANAGEMENT_API_TOKEN}",
+        }
+
+        response = await make_request_with_error_handling(
+            "PATCH", url, headers=headers, data=payload
+        )
+
+        return response.get("body")
 
 
 organization_manager_obj = OrganizationManager()
