@@ -5,6 +5,9 @@ from fastapi import HTTPException
 
 from settings import Settings
 
+#from sqlalchemy.exc import SQLAlechemyError
+#from sqlalchemy.ext.asyncio import AsyncSession
+
 
 async def make_request_with_error_handling(
     method: str, url: str, headers=None, data=None

@@ -2,39 +2,36 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils import database_exists, create_database
 from dotenv import load_dotenv
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 import os
 
 load_dotenv()
 
-USER = os.environ.get("POSTGRES_USER") #"postgres"
-PASSWORD = os.environ.get("POSTGRES_PASSWORD") #"password"
-HOST = os.environ.get("POSTGRES_HOST") #"localhost"
-PORT = os.environ.get("POSTGRES_PORT") #"5432"
-DB_NAME = os.environ.get("POSTGRES_NAME") #"employee_manager_db"
+USER = os.environ.get("POSTGRES_USER")
+PASSWORD = os.environ.get("POSTGRES_PASSWORD")
+HOST = os.environ.get("POSTGRES_HOST")
+PORT = os.environ.get("POSTGRES_PORT")
+DB_NAME = os.environ.get("POSTGRES_NAME")
 
 
-#SYNC_DATABASE_URL = f"postgresql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DB_NAME}"
-
-def get_engine():#user: str, password: str, host: str, port: str, db: str):
-
-    database_url = f"postgresql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DB_NAME}" #f"postgresql://{user}:{password}@{host}:{port}/{db}"
-
-    if database_exists(database_url) == False:
-        create_database(database_url)
-
-    engine = create_engine(database_url, pool_size=50, echo=False)
-
-    return engine
+SYNC_DATABASE_URL = f"postgresql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DB_NAME}"
+ASYNC_DATABASE_URL = f"postgresql+asyncpg://{USER}:{PASSWORD}@{HOST}:{PORT}/{DB_NAME}"
 
 
-db_engine = get_engine() #"postgres", "password", "localhost", "5432", "user_manager_db")
+def init_database():
+    sync_engine = create_engine(SYNC_DATABASE_URL)
+    if not database_exists(sync_engine.url):
+        create_database(sync_engine.url)
 
-SessionLocal = sessionmaker(bind=db_engine)
+init_database()
 
+sync_engine = create_engine(SYNC_DATABASE_URL)
+async_engine = create_async_engine(ASYNC_DATABASE_URL)
 
-def get_db():
-    session = SessionLocal()
-    try:
+SesionLocal = sessionmaker(bind=async_engine, class_=AsyncSession, expire_on_commit=False)
+
+async def get_db():
+    async with SesionLocal() as session:
         yield session
-    finally:
-        session.close()
+
+
