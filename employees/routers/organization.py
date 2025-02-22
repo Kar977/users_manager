@@ -5,7 +5,8 @@ from employees.schemas import (
     OrganizationName,
     OrganizationIdentifier,
     ModifyOrganization,
-    ModifyClientType,
+    ListOrganizations,
+    RemoveUserFromOrganization,
 )
 from employees.services.organization import organization_manager_obj
 
@@ -16,6 +17,13 @@ router = APIRouter()
 async def get_organization(organization_request: OrganizationName):
     return await organization_manager_obj.get_organization_by_name(
         organization_request.name
+    )
+
+
+@router.get("/organizations", status_code=200)
+async def list_organizations(organization_request: ListOrganizations):
+    return await organization_manager_obj.get_organizations_list(
+        organization_request.tenant_domain
     )
 
 
@@ -45,8 +53,8 @@ async def modify_organization_router(organization_request: ModifyOrganization):
     )
 
 
-@router.patch("/change_client_type", status_code=200)
-async def change_client_type(user_request: ModifyClientType):
-    return await organization_manager_obj.change_client_type(
-        user_request.client_id, user_request.app_type
+@router.delete("/organization/user", status_code=201)
+async def remove_user_from_organization(user_request: RemoveUserFromOrganization):
+    return await organization_manager_obj.remove_user_from_organization(
+        user_id=user_request.user_id, organization_id=user_request.organization_id
     )

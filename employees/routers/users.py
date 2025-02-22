@@ -6,7 +6,7 @@ from employees.schemas import (
     DeleteUserAccount,
     ModifyUser,
     NewMember,
-    ModifyClientType,
+    AddRolesToUser,
 )
 from employees.services.users import user_manager_obj
 
@@ -28,12 +28,12 @@ async def get_all_users():
     return await user_manager_obj.list_users()
 
 
-@router.get("/user/by_email", status_code=200)
-async def get_user_by_email(email: str):
+@router.get("/user/id/{email}", status_code=200)
+async def get_user_id_by_email(email: str):
     return await user_manager_obj.get_user_id_by_email(email)
 
 
-@router.post("/user/password_change", status_code=201)
+@router.post("/user/password-reset/request", status_code=201)
 async def send_password_email_ticket(user_request: SetUserPasswordEmail):
     return await user_manager_obj.send_email_with_password_change(
         email=user_request.user_email
@@ -49,13 +49,6 @@ async def delete_user(user_request: DeleteUserAccount):
 async def modify_user(user_request: ModifyUser):
     return await user_manager_obj.modify_user(
         user_id=user_request.user_id,
-        blocked=user_request.blocked,
-        email_verified=user_request.email_verified,
-        email=user_request.email,
-        phone_number=user_request.phone_number,
-        phone_verified=user_request.phone_verified,
-        user_metadata=user_request.user_metadata,
-        app_metadata=user_request.app_metadata,
         given_name=user_request.given_name,
         family_name=user_request.family_name,
         name=user_request.name,
@@ -64,19 +57,21 @@ async def modify_user(user_request: ModifyUser):
         verify_email=user_request.verify_email,
         verify_phone_number=user_request.verify_phone_number,
         password=user_request.password,
-        connection=user_request.connection,
-        client_id=user_request.client_id,
         username=user_request.username,
     )
 
 
-@router.post("/send_invitation", status_code=200)
+@router.post("/user/organization/invitation", status_code=200)
 async def send_invitation(user_request: NewMember):
-    return await user_manager_obj.invite_user_to_organization(user_request.email)
+    return await user_manager_obj.invite_user_to_organization(
+        user_request.email, user_request.organization_id
+    )
 
 
-@router.patch("/change_client_type", status_code=200)
-async def change_client_type(user_request: ModifyClientType):
-    return await organization_manager_obj.change_client_type(
-        user_request.client_id, user_request.app_type
+@router.post("/user/roles", status_code=200)
+async def add_roles_to_user(user_request: AddRolesToUser):
+    return await user_manager_obj.add_roles_to_already_assigned_user(
+        user_id=user_request.user_id,
+        organization_id=user_request.organization,
+        roles=user_request.roles,
     )
