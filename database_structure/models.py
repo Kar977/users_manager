@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, DATE, ForeignKey
 from sqlalchemy.orm import declarative_base, relationship, backref, validates
 
-from database_structure.database import db_engine
+from database_structure.database import sync_engine as db_engine
 
 Base = declarative_base()
 
