@@ -23,15 +23,17 @@ def init_database():
     if not database_exists(sync_engine.url):
         create_database(sync_engine.url)
 
+
 init_database()
 
 sync_engine = create_engine(SYNC_DATABASE_URL)
 async_engine = create_async_engine(ASYNC_DATABASE_URL)
 
-SesionLocal = sessionmaker(bind=async_engine, class_=AsyncSession, expire_on_commit=False)
+SesionLocal = sessionmaker(
+    bind=async_engine, class_=AsyncSession, expire_on_commit=False
+)
+
 
 async def get_db():
     async with SesionLocal() as session:
         yield session
-
-

@@ -66,7 +66,6 @@ class UserManager:
         return response.get("body")
 
     async def list_users(self):
-        print("tutaj23")
         url = f"https://{Settings.TENANT_DOMAIN}.eu.auth0.com/api/v2/users"
 
         payload = {}
