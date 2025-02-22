@@ -66,7 +66,7 @@ class UserManager:
         return response.get("body")
 
     async def list_users(self):
-
+        print("tutaj23")
         url = f"https://{Settings.TENANT_DOMAIN}.eu.auth0.com/api/v2/users"
 
         payload = {}
@@ -143,50 +143,20 @@ class UserManager:
 
         return response.get("body")
 
-    async def modify_user(
-        self,
-        user_id: str,
-        blocked: bool = None,
-        email_verified: bool = None,
-        email: str = None,
-        phone_number: str = None,
-        phone_verified: bool = None,
-        user_metadata: dict = None,
-        app_metadata: dict = None,
-        given_name: str = None,
-        family_name: str = None,
-        name: str = None,
-        nickname: str = None,
-        picture: str = None,
-        verify_email: bool = None,
-        verify_phone_number: bool = None,
-        password: str = None,
-        connection: str = None,
-        client_id: str = None,
-        username: str = None,
-    ):
+    async def modify_user(self, **kwargs):
 
-        url = f"https://{Settings.TENANT_DOMAIN}.eu.auth0.com/api/v2/users/auth0|{user_id}"
+        url = f"https://{Settings.TENANT_DOMAIN}.eu.auth0.com/api/v2/users/auth0|{kwargs.get('user_id')}"
 
         payload = {
-            "blocked": blocked,
-            "email_verified": email_verified,
-            "email": email,
-            "phone_number": phone_number,
-            "phone_verified": phone_verified,
-            "user_metadata": user_metadata,
-            "app_metadata": app_metadata,
-            "given_name": given_name,
-            "family_name": family_name,
-            "name": name,
-            "nickname": nickname,
-            "picture": picture,
-            "verify_email": verify_email,
-            "verify_phone_number": verify_phone_number,
-            "password": password,
-            "connection": connection,
-            "client_id": client_id,
-            "username": username,
+            "given_name": kwargs.get("given_name", None),
+            "family_name": kwargs.get("family_name", None),
+            "name": kwargs.get("name", None),
+            "nickname": kwargs.get("nickname", None),
+            "picture": kwargs.get("picture", None),
+            "verify_email": kwargs.get("verify_email", None),
+            "verify_phone_number": kwargs.get("verify_phone_number", None),
+            "password": kwargs.get("password", None),
+            "username": kwargs.get("username", None),
         }
 
         payload = json.dumps({k: v for k, v in payload.items() if v is not None})
@@ -203,9 +173,13 @@ class UserManager:
 
         return response.get("body")
 
-    async def invite_user_to_organization(self, user_email: str):
+    async def invite_user_to_organization(
+        self,
+        user_email: str,
+        organization_id: str,
+    ):
 
-        url = f"https://{Settings.TENANT_DOMAIN}.eu.auth0.com/api/v2/organizations/{Settings.ORGANIZATION_IDENTIFIER}/invitations"
+        url = f"https://{Settings.TENANT_DOMAIN}.eu.auth0.com/api/v2/organizations/{organization_id}/invitations"
 
         payload = json.dumps(
             {
@@ -216,15 +190,31 @@ class UserManager:
                 "app_metadata": {},
                 "user_metadata": {},
                 "ttl_sec": 0,
-                # "roles": [ #ToDo implement the roles
-                #    "string"
-                # ],
+                "roles": ["employee"],
                 "send_invitation_email": True,
             }
         )
         headers = {
             "Content-Type": "application/json",
             "Accept": "application/json",
+            "Authorization": f"Bearer {Settings.MANAGEMENT_API_TOKEN}",
+        }
+
+        response = await make_request_with_error_handling(
+            "POST", url, headers=headers, data=payload
+        )
+
+        return response.get("body")
+
+    async def add_roles_to_already_exsisting_user_in_organization(
+        self, user_id: str, organization_id: str, roles: list
+    ):
+
+        url = f"https://{Settings.TENANT_DOMAIN}.eu.auth0.com/api/v2/organizations/{organization_id}/members/{user_id}/roles"
+
+        payload = json.dumps({"roles": roles})
+        headers = {
+            "Content-Type": "application/json",
             "Authorization": f"Bearer {Settings.MANAGEMENT_API_TOKEN}",
         }
 

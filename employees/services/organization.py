@@ -163,5 +163,35 @@ class OrganizationManager:
 
         return response.get("body")
 
+    async def get_organizations_list(self, tenant):
+        url = f"https://{tenant}.eu.auth0.com/api/v2/organizations"
+
+        payload = {}
+        headers = {
+            "Accept": "application/json",
+            "Authorization": f"Bearer {Settings.MANAGEMENT_API_TOKEN}",
+        }
+
+        response = await make_request_with_error_handling(
+            "GET", url, headers=headers, data=payload
+        )
+
+        return response.get("body")
+
+    async def remove_user_from_organization(self, user_id: str, organization_id: str):
+        url = f"https://{Settings.TENANT_DOMAIN}.eu.auth0.com/api/v2/organizations/{organization_id}/members/{user_id}"
+
+        payload = {}
+        headers = {
+            "Accept": "application/json",
+            "Authorization": f"Bearer {Settings.MANAGEMENT_API_TOKEN}",
+        }
+
+        response = await make_request_with_error_handling(
+            "GET", url, headers=headers, data=payload
+        )
+
+        return response.get("body")
+
 
 organization_manager_obj = OrganizationManager()
