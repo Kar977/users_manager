@@ -1,5 +1,5 @@
 services:
-  db:
+  user-db:
     image: postgres:15
     restart: always
     env_file:
@@ -10,18 +10,35 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres_data2:/var/lib/postgresql/data
-  web:
+    networks:
+      - service_user_network
+  user-service:
     build:
       context: ../
       dockerfile: docker/Dockerfile
     restart: always
     depends_on:
-     - db
+     - user-db
     env_file:
       - .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_NAME}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      TENANT_DOMAIN: ${TENANT_DOMAIN}
+      DATABASE_ID_CONNECTION: ${DATABASE_ID_CONNECTION}
+      MANAGEMENT_API_TOKEN: ${MANAGEMENT_API_TOKEN}
+      CLIENT_ID: ${CLIENT_ID}
+      ORGANIZATION_IDENTIFIER: ${ORGANIZATION_IDENTIFIER}
+      MAIL_GUN_API_KEY: ${MAIL_GUN_API_KEY}
     volumes:
       - ../users_manager:/app
     ports:
       - "8002:8002"
+    networks:
+      - service_user_network
 volumes:
   postgres_data2:
+networks:
+  service_user_network:
+    external: true

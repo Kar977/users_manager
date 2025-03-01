@@ -1,8 +1,10 @@
-fastapi==0.101.0
+fastapi #0.101.0
 uvicorn
 sqlalchemy
-pydantic==1.10.4
+pydantic #1.10.4
 sqlalchemy-utils
 psycopg2-binary
 aiohttp
 python-dotenv
+pydantic-settings
+asyncpg
