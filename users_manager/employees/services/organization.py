@@ -2,7 +2,7 @@ import json
 
 import aiohttp
 from fastapi import HTTPException
-from settings import Settings
+from settings import settings
 
 
 async def make_request_with_error_handling(
@@ -40,7 +40,7 @@ class OrganizationManager:
         background_color: str = "#e0b9b6",
     ):
 
-        url = f"https://{Settings.TENANT_DOMAIN}.eu.auth0.com/api/v2/organizations"
+        url = f"https://{settings.tenant_domain}.eu.auth0.com/api/v2/organizations"
 
         payload = json.dumps(
             {
@@ -55,7 +55,7 @@ class OrganizationManager:
                 "metadata": {},
                 "enabled_connections": [
                     {
-                        "connection_id": f"{Settings.DATABASE_ID_CONNECTION}",
+                        "connection_id": f"{settings.database_id_connection}",
                         "assign_membership_on_login": True,
                         "show_as_button": True,
                         "is_signup_enabled": True,
@@ -66,7 +66,7 @@ class OrganizationManager:
         headers = {
             "Content-Type": "application/json",
             "Accept": "application/json",
-            "Authorization": f"Bearer {Settings.MANAGEMENT_API_TOKEN}",
+            "Authorization": f"Bearer {settings.management_api_token}",
         }
 
         response = await make_request_with_error_handling(
@@ -77,12 +77,12 @@ class OrganizationManager:
 
     async def get_organization_by_name(self, name: str = "nowy-polski-salon"):
 
-        url = f"https://{Settings.TENANT_DOMAIN}.eu.auth0.com/api/v2/organizations/name/{name}"
+        url = f"https://{settings.tenant_domain}.eu.auth0.com/api/v2/organizations/name/{name}"
 
         payload = {}
         headers = {
             "Accept": "application/json",
-            "Authorization": f"Bearer {Settings.MANAGEMENT_API_TOKEN}",
+            "Authorization": f"Bearer {settings.management_api_token}",
         }
 
         response = await make_request_with_error_handling(
@@ -92,10 +92,10 @@ class OrganizationManager:
 
     async def delete_organization_by_identifier(self, identifier: str):
 
-        url = f"https://{Settings.TENANT_DOMAIN}.eu.auth0.com/api/v2/organizations/{identifier}"
+        url = f"https://{settings.tenant_domain}.eu.auth0.com/api/v2/organizations/{identifier}"
 
         payload = {}
-        headers = {"Authorization": f"Bearer {Settings.MANAGEMENT_API_TOKEN}"}
+        headers = {"Authorization": f"Bearer {settings.management_api_token}"}
 
         response = await make_request_with_error_handling(
             "DELETE", url, headers=headers, data=payload
@@ -112,7 +112,7 @@ class OrganizationManager:
         background_color: str = None,
     ):
 
-        url = f"https://{Settings.TENANT_DOMAIN}.eu.auth0.com/api/v2/organizations/{identifier}"
+        url = f"https://{settings.tenant_domain}.eu.auth0.com/api/v2/organizations/{identifier}"
 
         payload = {
             "name": name,
@@ -136,7 +136,7 @@ class OrganizationManager:
         headers = {
             "Content-Type": "application/json",
             "Accept": "application/json",
-            "Authorization": f"Bearer {Settings.MANAGEMENT_API_TOKEN}",
+            "Authorization": f"Bearer {settings.management_api_token}",
         }
 
         response = await make_request_with_error_handling(
@@ -146,14 +146,14 @@ class OrganizationManager:
 
     async def change_client_type(self, client_id: str, app_type: str):
         url = (
-            f"https://{Settings.TENANT_DOMAIN}.eu.auth0.com/api/v2/clients/{client_id}"
+            f"https://{settings.tenant_domain}.eu.auth0.com/api/v2/clients/{client_id}"
         )
 
         payload = json.dumps({"app_type": f"{app_type}"})
         headers = {
             "Content-Type": "application/json",
             "Accept": "application/json",
-            "Authorization": f"Bearer {Settings.MANAGEMENT_API_TOKEN}",
+            "Authorization": f"Bearer {settings.management_api_token}",
         }
 
         response = await make_request_with_error_handling(
@@ -168,7 +168,7 @@ class OrganizationManager:
         payload = {}
         headers = {
             "Accept": "application/json",
-            "Authorization": f"Bearer {Settings.MANAGEMENT_API_TOKEN}",
+            "Authorization": f"Bearer {settings.management_api_token}",
         }
 
         response = await make_request_with_error_handling(
@@ -178,12 +178,12 @@ class OrganizationManager:
         return response.get("body")
 
     async def remove_user_from_organization(self, user_id: str, organization_id: str):
-        url = f"https://{Settings.TENANT_DOMAIN}.eu.auth0.com/api/v2/organizations/{organization_id}/members/{user_id}"
+        url = f"https://{settings.tenant_domain}.eu.auth0.com/api/v2/organizations/{organization_id}/members/{user_id}"
 
         payload = {}
         headers = {
             "Accept": "application/json",
-            "Authorization": f"Bearer {Settings.MANAGEMENT_API_TOKEN}",
+            "Authorization": f"Bearer {settings.management_api_token}",
         }
 
         response = await make_request_with_error_handling(

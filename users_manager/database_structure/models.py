@@ -1,9 +1,10 @@
 from sqlalchemy import Column, Integer, String, DATE, ForeignKey
-from sqlalchemy.orm import declarative_base, relationship, backref, validates
+from sqlalchemy.orm import relationship, backref, validates, DeclarativeBase
 
-from database_structure.database import sync_engine as db_engine
 
-Base = declarative_base()
+
+class Base(DeclarativeBase):
+    pass
 
 VALID_ROLE = (
     "employee",
@@ -52,5 +53,3 @@ class Employee(Base):
             )
         return employment_status
 
-
-Base.metadata.create_all(bind=db_engine)

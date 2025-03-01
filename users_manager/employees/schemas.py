@@ -58,11 +58,6 @@ class NewMember(BaseModel):
     organization_id: str
 
 
-class ModifyClientType(BaseModel):  # ToDo skasowac
-    client_id: str
-    app_type: str
-
-
 class ListOrganizations(BaseModel):
     tenant_domain: str
 
