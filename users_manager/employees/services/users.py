@@ -1,9 +1,9 @@
 import json
+import secrets
 
 import aiohttp
 from fastapi import HTTPException
-
-from settings import Settings
+from settings import settings
 
 
 async def make_request_with_error_handling(
@@ -33,10 +33,12 @@ async def make_request_with_error_handling(
 
 class UserManager:
 
+
+
     async def create_user(self, email: str, name: str, family_name: str, username: str):
 
-        url = f"https://{Settings.TENANT_DOMAIN}.eu.auth0.com/api/v2/users"
-
+        url = f"https://{settings.tenant_domain}.eu.auth0.com/api/v2/users"
+        new_password = secrets.token_urlsafe(8)
         payload = json.dumps(
             {
                 "email": f"{email}",
@@ -48,13 +50,13 @@ class UserManager:
                 "connection": "Username-Password-Authentication",
                 "verify_email": True,
                 "username": f"{username}",
-                "password": "k1#M088sBM",  # ToDo change on some random
+                "password": new_password,
             }
         )
         headers = {
             "Content-Type": "application/json",
             "Accept": "application/json",
-            "Authorization": f"Bearer {Settings.MANAGEMENT_API_TOKEN}",
+            "Authorization": f"Bearer {settings.management_api_token}",
         }
 
         response = await make_request_with_error_handling(
@@ -66,12 +68,12 @@ class UserManager:
         return response.get("body")
 
     async def list_users(self):
-        url = f"https://{Settings.TENANT_DOMAIN}.eu.auth0.com/api/v2/users"
+        url = f"https://{settings.tenant_domain}.eu.auth0.com/api/v2/users"
 
         payload = {}
         headers = {
             "Accept": "application/json",
-            "Authorization": f"Bearer {Settings.MANAGEMENT_API_TOKEN}",
+            "Authorization": f"Bearer {settings.management_api_token}",
         }
 
         response = await make_request_with_error_handling(
@@ -84,12 +86,12 @@ class UserManager:
         payload = {}
         headers = {
             "content-type": "application/json",
-            "authorization": f"Bearer {Settings.MANAGEMENT_API_TOKEN}",
+            "authorization": f"Bearer {settings.management_api_token}",
         }
 
         response = await make_request_with_error_handling(
             "GET",
-            f"https://{Settings.TENANT_DOMAIN}.eu.auth0.com/api/v2/users-by-email?email={email}",
+            f"https://{settings.tenant_domain}.eu.auth0.com/api/v2/users-by-email?email={email}",
             headers=headers,
             data=payload,
         )
@@ -115,12 +117,12 @@ class UserManager:
         payload = json.dumps(payload)
         headers = {
             "content-type": "application/json",
-            "Authorization": f"Bearer {Settings.MANAGEMENT_API_TOKEN}",
+            "Authorization": f"Bearer {settings.management_api_token}",
         }
 
         response = await make_request_with_error_handling(
             "POST",
-            f"https://{Settings.TENANT_DOMAIN}.eu.auth0.com/dbconnections/change_password",
+            f"https://{settings.tenant_domain}.eu.auth0.com/dbconnections/change_password",
             data=payload,
             headers=headers,
         )
@@ -131,10 +133,10 @@ class UserManager:
 
         user_id = await user_manager_obj.get_user_id_by_email(email=email)
 
-        url = f"https://{Settings.TENANT_DOMAIN}.eu.auth0.com/api/v2/users/auth0|{user_id}"
+        url = f"https://{settings.tenant_domain}.eu.auth0.com/api/v2/users/auth0|{user_id}"
 
         payload = {}
-        headers = {"Authorization": f"Bearer {Settings.MANAGEMENT_API_TOKEN}"}
+        headers = {"Authorization": f"Bearer {settings.management_api_token}"}
 
         response = await make_request_with_error_handling(
             "DELETE", url, headers=headers, data=payload
@@ -144,7 +146,7 @@ class UserManager:
 
     async def modify_user(self, **kwargs):
 
-        url = f"https://{Settings.TENANT_DOMAIN}.eu.auth0.com/api/v2/users/auth0|{kwargs.get('user_id')}"
+        url = f"https://{settings.tenant_domain}.eu.auth0.com/api/v2/users/auth0|{kwargs.get('user_id')}"
 
         payload = {
             "given_name": kwargs.get("given_name", None),
@@ -163,7 +165,7 @@ class UserManager:
         headers = {
             "Content-Type": "application/json",
             "Accept": "application/json",
-            "Authorization": f"Bearer {Settings.MANAGEMENT_API_TOKEN}",
+            "Authorization": f"Bearer {settings.management_api_token}",
         }
 
         response = await make_request_with_error_handling(
@@ -178,14 +180,14 @@ class UserManager:
         organization_id: str,
     ):
 
-        url = f"https://{Settings.TENANT_DOMAIN}.eu.auth0.com/api/v2/organizations/{organization_id}/invitations"
+        url = f"https://{settings.tenant_domain}.eu.auth0.com/api/v2/organizations/{organization_id}/invitations"
 
         payload = json.dumps(
             {
                 "inviter": {"name": "Brodacz TEAM"},
                 "invitee": {"email": f"{user_email}"},
-                "client_id": f"{Settings.CLIENT_ID}",
-                "connection_id": f"{Settings.DATABASE_ID_CONNECTION}",
+                "client_id": f"{settings.client_id}",
+                "connection_id": f"{settings.database_id_connection}",
                 "app_metadata": {},
                 "user_metadata": {},
                 "ttl_sec": 0,
@@ -196,7 +198,7 @@ class UserManager:
         headers = {
             "Content-Type": "application/json",
             "Accept": "application/json",
-            "Authorization": f"Bearer {Settings.MANAGEMENT_API_TOKEN}",
+            "Authorization": f"Bearer {settings.management_api_token}",
         }
 
         response = await make_request_with_error_handling(
@@ -209,12 +211,12 @@ class UserManager:
         self, user_id: str, organization_id: str, roles: list
     ):
 
-        url = f"https://{Settings.TENANT_DOMAIN}.eu.auth0.com/api/v2/organizations/{organization_id}/members/{user_id}/roles"
+        url = f"https://{settings.tenant_domain}.eu.auth0.com/api/v2/organizations/{organization_id}/members/{user_id}/roles"
 
         payload = json.dumps({"roles": roles})
         headers = {
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {Settings.MANAGEMENT_API_TOKEN}",
+            "Authorization": f"Bearer {settings.management_api_token}",
         }
 
         response = await make_request_with_error_handling(
