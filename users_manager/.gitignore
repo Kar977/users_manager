@@ -4,3 +4,4 @@ __pycache__/
 .idea/
 /archive/
 docker/.env
+__pycache__
