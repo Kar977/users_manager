@@ -3,7 +3,7 @@ import secrets
 
 import aiohttp
 from fastapi import HTTPException
-from settings import settings
+from users_manager.settings import settings
 
 
 async def make_request_with_error_handling(
@@ -32,8 +32,6 @@ async def make_request_with_error_handling(
 
 
 class UserManager:
-
-
 
     async def create_user(self, email: str, name: str, family_name: str, username: str):
 

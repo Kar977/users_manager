@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from employees.schemas import (
+from users_manager.employees.schemas import (
     CreateUser,
     SetUserPasswordEmail,
     DeleteUserAccount,
@@ -8,7 +8,7 @@ from employees.schemas import (
     NewMember,
     AddRolesToUser,
 )
-from employees.services.users import user_manager_obj
+from users_manager.employees.services.users import user_manager_obj
 
 router = APIRouter()
 
