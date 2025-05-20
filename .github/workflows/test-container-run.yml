@@ -60,7 +60,7 @@ jobs:
 
       - name: Check if API Gateway is running
         run: |
-          curl --fail http://localhost:8002/organization || (echo "Users manager not responding" && exit 1)
+          curl --fail http://localhost:8002/user/id/karolmatuszak7@gmail.com || (echo "Users manager not responding" && exit 1)
 
       - name: Tear down containers and networks
         if: always()
