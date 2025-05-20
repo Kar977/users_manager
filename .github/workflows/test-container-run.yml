@@ -44,8 +44,8 @@ jobs:
           printf "%s" "${{ secrets.USERS_ENV_FILE }}" > docker/.env
 
       - name: Build and start containers
-        working-directory: docker
-        run: |  
+        run: |
+          cd docker
           echo "Current working directory:"
           pwd
           docker-compose up -d --build
