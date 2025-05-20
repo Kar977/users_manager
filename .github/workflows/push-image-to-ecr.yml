@@ -55,7 +55,7 @@ jobs:
 
       - name: Tag Docker image
         run: |
-          docker tag docker-user-service_1:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.eu-central-1.amazonaws.com/user-manager-service:latest
+          docker tag docker-user-service:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.eu-central-1.amazonaws.com/user-manager-service:latest
 
       - name: Push Docker image to Amazon ECR
         run: |
