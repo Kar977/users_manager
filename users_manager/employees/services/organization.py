@@ -185,7 +185,6 @@ class OrganizationManager:
             "Accept": "application/json",
             "Authorization": f"Bearer {settings.management_api_token}",
         }
-
         response = await make_request_with_error_handling(
             "GET", url, headers=headers, data=payload
         )

@@ -2,9 +2,9 @@ from sqlalchemy import Column, Integer, String, DATE, ForeignKey
 from sqlalchemy.orm import relationship, backref, validates, DeclarativeBase
 
 
-
 class Base(DeclarativeBase):
     pass
+
 
 VALID_ROLE = (
     "employee",
@@ -52,4 +52,3 @@ class Employee(Base):
                 f"Invalid employment_status {employment_status}. Must be one of {VALID_EMPLOYMENT_STATUS}"
             )
         return employment_status
-

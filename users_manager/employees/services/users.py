@@ -33,8 +33,6 @@ async def make_request_with_error_handling(
 
 class UserManager:
 
-
-
     async def create_user(self, email: str, name: str, family_name: str, username: str):
 
         url = f"https://{settings.tenant_domain}.eu.auth0.com/api/v2/users"

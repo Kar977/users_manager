@@ -8,3 +8,5 @@ aiohttp
 python-dotenv
 pydantic-settings
 asyncpg
+httpx
+pytest-asyncio

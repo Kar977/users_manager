@@ -1,6 +1,8 @@
+/docker/.env
 .env
 __pycache__/
 *.pyc
 .idea/
 /archive/
 docker/.env
+__pycache__

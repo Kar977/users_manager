@@ -32,7 +32,7 @@ services:
       ORGANIZATION_IDENTIFIER: ${ORGANIZATION_IDENTIFIER}
       MAIL_GUN_API_KEY: ${MAIL_GUN_API_KEY}
     volumes:
-      - ../users_manager:/app
+      - ../../users_manager:/app
     ports:
       - "8002:8002"
     networks:
@@ -42,3 +42,4 @@ volumes:
 networks:
   service_user_network:
     external: true
+  #
