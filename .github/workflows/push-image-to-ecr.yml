@@ -1,0 +1,62 @@
+name: Push Docker image to Amazon ECR
+
+on:
+  workflow_run:
+    workflows: ["Users manager application", "Docker Compose Check"]
+    types:
+      - completed
+
+jobs:
+  push-to-ecr:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    
+    env:
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      POSTGRES_NAME: ${{ secrets.POSTGRES_NAME }}
+      POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+      POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
+      MAIL_GUN_API_KEY: ${{ secrets.MAIL_GUN_API_KEY }}
+      TENANT_DOMAIN: ${{ secrets.TENANT_DOMAIN }}
+      DATABASE_ID_CONNECTION: ${{ secrets.DATABASE_ID_CONNECTION }}
+      MANAGEMENT_API_TOKEN: ${{ secrets.MANAGEMENT_API_TOKEN }}
+      CLIENT_ID: ${{ secrets.CLIENT_ID }}
+      ORGANIZATION_IDENTIFIER: ${{ secrets.ORGANIZATION_IDENTIFIER }}
+      
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+
+      - name: Log in to Amazon ECR
+        run: |
+          aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.eu-central-1.amazonaws.com
+
+      - name: Write .env file from GitHub Secret
+        run: |
+          printf "%s" "${{ secrets.EMPLOYEE_ENV_FILE }}" > users_manager/.env
+          printf "%s" "${{ secrets.EMPLOYEE_ENV_FILE }}" > docker/.env
+      
+      - name: Build Docker images
+        run: |
+          cd docker
+          docker compose build
+
+      - name: Debug - list local docker images
+        run: docker images
+
+      - name: Tag Docker image
+        run: |
+          docker tag docker-user-service_1:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.eu-central-1.amazonaws.com/user-manager-service:latest
+
+      - name: Push Docker image to Amazon ECR
+        run: |
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.eu-central-1.amazonaws.com/user-manager-service:latest
