@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
-from users_manager.employees.routers import organization as organization_router
-from users_manager.employees.routers import users as users_router
+from employees.routers import organization as organization_router
+from employees.routers import users as users_router
 
 app = FastAPI()
 

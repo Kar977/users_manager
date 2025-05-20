@@ -6,11 +6,11 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=Path(__file__).parent / ".env")
-    postgres_user: str = Field(default="postgres")
-    postgres_password: str = Field(default="password")
-    postgres_host: str = Field(default="user-db")
-    postgres_port: str = Field(default="5432")
-    postgres_name: str = Field(default="employee_manager_db")
+    postgres_user: str = Field()
+    postgres_password: str = Field()
+    postgres_host: str = Field()
+    postgres_port: str = Field()
+    postgres_name: str = Field()
     tenant_domain: str = Field()
     database_id_connection: str = Field()
     management_api_token: str = Field()

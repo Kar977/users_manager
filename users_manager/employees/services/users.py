@@ -3,7 +3,7 @@ import secrets
 
 import aiohttp
 from fastapi import HTTPException
-from users_manager.settings import settings
+from settings import settings
 
 
 async def make_request_with_error_handling(

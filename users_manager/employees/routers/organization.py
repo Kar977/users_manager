@@ -1,6 +1,4 @@
-from fastapi import APIRouter
-
-from users_manager.employees.schemas import (
+from employees.schemas import (
     CreateOrganization,
     OrganizationName,
     OrganizationIdentifier,
@@ -8,7 +6,8 @@ from users_manager.employees.schemas import (
     ListOrganizations,
     RemoveUserFromOrganization,
 )
-from users_manager.employees.services.organization import organization_manager_obj
+from employees.services.organization import organization_manager_obj
+from fastapi import APIRouter
 
 router = APIRouter()
 
