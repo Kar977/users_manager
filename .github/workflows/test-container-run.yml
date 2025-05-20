@@ -42,6 +42,7 @@ jobs:
       - name: Write .env file from GitHub Secret
         run: |
           printf "%s" "${{ secrets.USERS_ENV_FILE }}" > docker/.env
+          printf "%s" "${{ secrets.USERS_ENV_FILE }}" > users_manager/.env
 
       - name: Build and start containers
         run: |
