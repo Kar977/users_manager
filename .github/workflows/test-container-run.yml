@@ -54,7 +54,7 @@ jobs:
         run: |
           echo "Waiting for services to become healthy..."
           sleep 20
-          docker logs docker_user-service
+          docker logs docker_user-service_1
           
           docker ps -a
 
