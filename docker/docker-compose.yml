@@ -3,7 +3,7 @@ services:
     image: postgres:15
     restart: always
     env_file:
-      - ../users_manager/.env
+      - ../.env
     environment:
       POSTGRES_DB: ${POSTGRES_NAME}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -20,7 +20,7 @@ services:
     depends_on:
      - user-db
     env_file:
-      - ../users_manager/.env
+      - ../.env
     environment:
       POSTGRES_DB: ${POSTGRES_NAME}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -32,7 +32,7 @@ services:
       ORGANIZATION_IDENTIFIER: ${ORGANIZATION_IDENTIFIER}
       MAIL_GUN_API_KEY: ${MAIL_GUN_API_KEY}
     volumes:
-      - ../users_manager:/app
+      - ../../users_manager:/app
     ports:
       - "8002:8002"
     networks:
