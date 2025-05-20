@@ -3,7 +3,7 @@ services:
     image: postgres:15
     restart: always
     env_file:
-      - ../.env
+      - ../../.env
     environment:
       POSTGRES_DB: ${POSTGRES_NAME}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -20,7 +20,7 @@ services:
     depends_on:
      - user-db
     env_file:
-      - ../.env
+      - ../../.env
     environment:
       POSTGRES_DB: ${POSTGRES_NAME}
       POSTGRES_USER: ${POSTGRES_USER}
